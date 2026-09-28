@@ -1,36 +1,96 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Bill Destroyers
 
-## Getting Started
+Landing page for a medical bill estimator. Visitors submit bill details, then a specialist follows up within 24 hours. Submissions are saved to Airtable.
 
-First, run the development server:
+## Run locally
+
+```bash
+npm install
+cp .env.example .env.local
+```
+
+Add your Airtable values to `.env.local` (see below), then:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Set up Airtable
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The form posts to `/api/submit`. That route writes one record to Airtable. The API token stays on the server, never in the browser.
 
-## Learn More
+### 1. Create a base and table
 
-To learn more about Next.js, take a look at the following resources:
+1. Sign in at [airtable.com](https://airtable.com).
+2. Click **Create** → **Grid base** (or start from scratch).
+3. Name the base **Bill Destroyers**.
+4. Rename the default table to **Submissions** (must match `AIRTABLE_TABLE_NAME`).
+5. Delete the sample fields, then add these fields **with these exact names**:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Field name   | Field type                         | Notes                                      |
+| ------------ | ---------------------------------- | ------------------------------------------ |
+| Name         | Single line text                   | Required                                   |
+| Email        | Email                              | Required                                   |
+| Phone        | Phone number                       | Or single line text                        |
+| State        | Single select                      | Add option **California**                  |
+| Bill Amount  | Currency                           | US Dollar, 2 decimal places                |
+| Provider     | Single line text                   | Hospital or provider name                  |
+| Description  | Long text                          | What the bill is for                       |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Airtable already stores a created time on every record, so you do not need a separate date field.
 
-## Deploy on Vercel
+To add more states later, add options to **State** in Airtable, then add the same codes to `ALLOWED_STATES` in `app/api/submit/route.ts` and to the `STATES` list in `components/EstimateForm.tsx`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 2. Get the base ID
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Open the base. The URL looks like:
+
+`https://airtable.com/appXXXXXXXXXXXXXX/...`
+
+The `app...` segment is `AIRTABLE_BASE_ID`. You can also find it under **Help** → **API documentation** while the base is open.
+
+### 3. Create a personal access token
+
+Airtable no longer uses the old “API key.” Use a personal access token:
+
+1. Open [https://airtable.com/create/tokens](https://airtable.com/create/tokens).
+2. Click **Create new token**.
+3. Name it **Bill Destroyers site**.
+4. Add these scopes:
+   - `data.records:write`
+   - `data.records:read` (optional, useful if you later list records)
+   - `schema.bases:read`
+5. Under **Access**, grant the token access to the **Bill Destroyers** base.
+6. Create the token and copy it once. It starts with `pat`.
+7. Put it in `.env.local` as `AIRTABLE_API_KEY`.
+
+### 4. Local env file
+
+`.env.local` should look like:
+
+```bash
+AIRTABLE_API_KEY=patAAAAAAAAAAAAAAAA
+AIRTABLE_BASE_ID=appXXXXXXXXXXXXXX
+AIRTABLE_TABLE_NAME=Submissions
+```
+
+Restart `npm run dev` after changing env vars. Submit the form and confirm a new row appears in Airtable.
+
+If a submit fails, check the terminal: Airtable error bodies are logged there. The usual causes are a mismatched table name, a missing field name, or a State option that is not exactly `California`.
+
+## Deploy (Vercel)
+
+1. Push the project to GitHub.
+2. Import it in [Vercel](https://vercel.com).
+3. Add the same three environment variables in **Settings → Environment Variables**.
+4. Deploy.
+
+Do not put the Airtable token in any client-side file.
+
+## Stack
+
+- Next.js App Router
+- Native CSS (no extra UI library)
+- Airtable Web API via a server route

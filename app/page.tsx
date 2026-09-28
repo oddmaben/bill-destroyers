@@ -1,69 +1,109 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import EstimateForm from "@/components/EstimateForm";
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>
-            To get started, edit the{" "}
-            <code className={styles.code}>page.tsx</code> file.
-          </h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <main id="main">
+      <section className="hero" aria-labelledby="hero-heading">
+        <div className="wrap hero-grid">
+          <div>
+            <p className="eyebrow">Medical bill estimator</p>
+            <h1 id="hero-heading">
+              See How Much We Can <span className="accent">Destroy</span> Your
+              Medical Bill
+            </h1>
+            <p className="lede">
+              Send us the details of your hospital or doctor bill. We look for
+              errors, overcharges, and room to negotiate, then a specialist
+              works with the provider so you may owe less.
+            </p>
+            <ul className="trust-list">
+              <li>
+                <CheckIcon />
+                Free to submit. No obligation to continue.
+              </li>
+              <li>
+                <CheckIcon />
+                A real specialist calls you within 24 hours.
+              </li>
+              <li>
+                <CheckIcon />
+                Currently helping patients in California.
+              </li>
+            </ul>
+          </div>
+
+          <div className="form-card" id="estimate">
+            <EstimateForm />
+          </div>
+        </div>
+      </section>
+
+      <section className="how" id="how-it-works" aria-labelledby="how-heading">
+        <div className="wrap">
+          <p className="section-kicker">Simple process</p>
+          <h2 id="how-heading">How it works</h2>
+          <p className="section-copy">
+            Three clear steps. You send the bill. We do the heavy lifting.
           </p>
+          <ol className="steps">
+            <li className="step">
+              <div className="step-num" aria-hidden="true">
+                01
+              </div>
+              <h3>Submit your bill</h3>
+              <p>
+                Fill out the form with your contact information, the amount, and
+                a short note about what the bill is for. You do not need to
+                upload paperwork yet.
+              </p>
+            </li>
+            <li className="step">
+              <div className="step-num" aria-hidden="true">
+                02
+              </div>
+              <h3>We review it</h3>
+              <p>
+                A bill negotiation specialist checks the charges, looks for
+                common billing mistakes, and estimates where we may be able to
+                lower what you owe.
+              </p>
+            </li>
+            <li className="step">
+              <div className="step-num" aria-hidden="true">
+                03
+              </div>
+              <h3>We negotiate for you</h3>
+              <p>
+                If you want to move forward, we talk with the hospital or
+                provider on your behalf and keep you posted until there is a
+                clearer, fairer number.
+              </p>
+            </li>
+          </ol>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </section>
+    </main>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg
+      className="check"
+      width="28"
+      height="28"
+      viewBox="0 0 28 28"
+      fill="none"
+      aria-hidden="true"
+    >
+      <circle cx="14" cy="14" r="14" fill="#E85D04" />
+      <path
+        d="M8 14.5 12.2 18.5 20 10"
+        stroke="#fff"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }
